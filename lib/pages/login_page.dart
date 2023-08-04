@@ -1,3 +1,4 @@
+import 'package:briessenchecker/services/dbhelper.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -6,9 +7,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
     return Scaffold(
       body: Form(
         child: Column(
@@ -16,20 +16,24 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              controller: usernameController,
-              decoration: const InputDecoration(label: Text('Username')),
+              controller: _emailController,
+              decoration: const InputDecoration(label: Text('Email')),
             ),
             TextFormField(
-              controller: passwordController,
+              controller: _passwordController,
               decoration: const InputDecoration(label: Text('Password')),
             ),
             FloatingActionButton.extended(
-                onPressed: _loginSubmitted, label: const Text('Login'))
+                onPressed: () => _loginSubmitted(
+                    _emailController.text, _passwordController.text),
+                label: const Text('Login'))
           ],
         ),
       ),
     );
   }
 
-  void _loginSubmitted() {}
+  void _loginSubmitted(String email, String password) {
+    DbHelper.login(email, password);
+  }
 }
