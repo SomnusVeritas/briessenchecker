@@ -26,12 +26,15 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     checklistProvider = Provider.of<ChecklistProvider>(context, listen: true);
     return Scaffold(
-      appBar: AppBar(actions: [
-        IconButton(
-          onPressed: () => DbHelper.logout(),
-          icon: const Icon(Icons.logout),
-        )
-      ]),
+      appBar: AppBar(
+        title: const Text('Brießenchecker9000'),
+        actions: [
+          IconButton(
+            onPressed: () => DbHelper.logout(),
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
       body: FutureBuilder(
         future: checklistFuture,
         builder: _futureBuilder,
@@ -70,8 +73,8 @@ class _DashboardPageState extends State<DashboardPage> {
   void _onAddTapped() {
     DbHelper.addOrUpdateChecklist(null).then((id) {
       checklistProvider.updateSelectedChecklist(id, silent: true);
-    });
-    Navigator.of(context).pushNamed(DetailChecklistPage.routeName);
+    }).whenComplete(
+        () => Navigator.of(context).pushNamed(DetailChecklistPage.routeName));
   }
 
   void _onListEntryTapped(Checklist cl) {
