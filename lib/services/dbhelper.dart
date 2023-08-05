@@ -1,5 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../assets/example_data.dart' as ed;
+import '../models/checklist.dart';
 
 class DbHelper {
   static late final SupabaseClient _client;
@@ -18,6 +20,12 @@ class DbHelper {
       email: email,
       password: password,
     );
+  }
+
+  static Future<List<Checklist>> get fetchChecklist async {
+    //TODO replace example data
+    await Future.delayed(const Duration(seconds: 2));
+    return ed.checklists;
   }
 
   static Stream<AuthState> get authChangeEventStream =>
