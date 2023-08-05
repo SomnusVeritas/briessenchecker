@@ -23,6 +23,10 @@ class DbHelper {
     );
   }
 
+  static Future<void> logout() async {
+    await _client.auth.signOut();
+  }
+
   static Future<List<Checklist>> get fetchChecklist async {
     //TODO replace example data
     await Future.delayed(const Duration(seconds: 2));

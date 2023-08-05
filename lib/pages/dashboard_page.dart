@@ -26,6 +26,12 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     checklistProvider = Provider.of<ChecklistProvider>(context, listen: true);
     return Scaffold(
+      appBar: AppBar(actions: [
+        IconButton(
+          onPressed: () => DbHelper.logout(),
+          icon: const Icon(Icons.logout),
+        )
+      ]),
       body: FutureBuilder(
         future: checklistFuture,
         builder: _futureBuilder,
