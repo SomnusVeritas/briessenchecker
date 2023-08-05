@@ -6,6 +6,9 @@ import '../models/listitem.dart';
 
 class DbHelper {
   static late final SupabaseClient _client;
+  static const checklistsTableName = 'checklists';
+  static const itemsTableName = 'items';
+  static const checkedItemsTableName = 'checkedItems';
 
   static Future<void> init() async {
     await Supabase.initialize(
@@ -28,15 +31,45 @@ class DbHelper {
   }
 
   static Future<List<Checklist>> get fetchChecklist async {
-    //TODO replace example data
-    await Future.delayed(const Duration(seconds: 2));
-    return ed.checklists;
+    List<Checklist> checklists = [];
+    final res = await _client
+        .from(checklistsTableName)
+        .select<List<Map<String, dynamic>>>();
+    for (final element in res) {
+      Checklist cl = Checklist(
+        element['id'],
+        element['ownerId'],
+        element['title'],
+        element['description'],
+        DateTime.parse(element['createdTime']),
+        [],
+      );
+      checklists.add(cl);
+    }
+    return checklists;
   }
 
   /// returns id of newly created checklist
-  static Future<int> addChecklist() async {
-    //TODO Add checklist
-    return 0;
+  static Future<int> addOrUpdateChecklist(Checklist? checklist) async {
+    final ownerId = _client.auth.currentSession!.user.id;
+
+    Map<String, dynamic> upsertMap = {
+      'ownerId': ownerId,
+    };
+    if (checklist != null) {
+      List<MapEntry<String, dynamic>> entries = [
+        MapEntry('id', checklist.id),
+        MapEntry('title', checklist.title),
+        MapEntry('description', checklist.description),
+      ];
+      upsertMap.addEntries(entries);
+    }
+
+    final res = await _client
+        .from('checklists')
+        .upsert(upsertMap)
+        .select<List<Map<String, dynamic>>>('id');
+    return res.last['id'] as int;
   }
 
   static Future<Checklist> getChecklistById(int id) async {

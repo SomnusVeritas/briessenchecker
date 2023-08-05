@@ -51,6 +51,8 @@ class _DashboardPageState extends State<DashboardPage> {
         itemBuilder: (context, index) =>
             _listBuilder(context, index, snapshot.data!),
       );
+    } else if (snapshot.hasError) {
+      return Text(snapshot.error.toString());
     } else {
       return const CircularProgressIndicator();
     }
@@ -59,13 +61,13 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget? _listBuilder(BuildContext context, int index, List<Checklist> list) {
     Checklist cl = list.elementAt(index);
     return ListTile(
-      title: Text(cl.title),
+      title: Text(cl.title == '' ? 'Unnamed ${cl.id}' : cl.title),
       subtitle: Text(cl.description),
     );
   }
 
   void _onAddTapped() {
-    DbHelper.addChecklist().then((id) {
+    DbHelper.addOrUpdateChecklist(null).then((id) {
       checklistProvider.updateSelectedChecklist(id, silent: true);
     });
     Navigator.of(context).pushNamed(DetailChecklistPage.routeName);
