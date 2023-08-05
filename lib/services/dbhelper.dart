@@ -34,6 +34,10 @@ class DbHelper {
     return 0;
   }
 
+  static Future<Checklist> getChecklistById(int id) async {
+    return ed.checklists.first;
+  }
+
   static Stream<AuthState> get authChangeEventStream =>
       _client.auth.onAuthStateChange;
 }
