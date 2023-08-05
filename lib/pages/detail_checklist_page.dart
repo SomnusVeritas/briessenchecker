@@ -17,8 +17,8 @@ class DetailChecklistPage extends StatefulWidget {
 class _DetailChecklistPageState extends State<DetailChecklistPage> {
   late Future<Checklist> _checklistFuture;
   late final ChecklistProvider _checklistProvider;
-  int? _selectedItemId;
   late Checklist _currentChecklist;
+  int? _selectedItemId;
 
   @override
   void dispose() {
@@ -30,19 +30,23 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   void initState() {
     super.initState();
     _checklistProvider = Provider.of<ChecklistProvider>(context, listen: false);
-    _checklistFuture = DbHelper.getChecklistById(1);
+    _checklistFuture =
+        DbHelper.getChecklistById(_checklistProvider.selectedChecklistId!);
   }
 
   Widget _futureBuilder(
       BuildContext context, AsyncSnapshot<Checklist> snapshot) {
     if (snapshot.hasData) {
       _currentChecklist = snapshot.data!;
+      String title = _currentChecklist.title;
       return Column(
         children: [
-          Text(_currentChecklist.title),
+          Text(title == '' ? 'Unnamed ${_currentChecklist.id}' : title),
           Text(_currentChecklist.description),
         ],
       );
+    } else if (snapshot.hasError) {
+      return Text(snapshot.error.toString());
     } else {
       return const CircularProgressIndicator();
     }
@@ -91,6 +95,11 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     );
   }
 
+  void _itemSaved(String title, String description) {
+    DbHelper.addOrUpdateItem(_checklistProvider.selectedChecklistId!, title,
+        description, _selectedItemId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,10 +112,5 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  void _itemSaved(String title, String description) {
-    DbHelper.addOrUpdateItem(_checklistProvider.selectedChecklistId!, title,
-        description, _selectedItemId);
   }
 }

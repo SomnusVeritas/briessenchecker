@@ -63,6 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return ListTile(
       title: Text(cl.title == '' ? 'Unnamed ${cl.id}' : cl.title),
       subtitle: Text(cl.description),
+      onTap: () => _onListEntryTapped(cl),
     );
   }
 
@@ -70,6 +71,11 @@ class _DashboardPageState extends State<DashboardPage> {
     DbHelper.addOrUpdateChecklist(null).then((id) {
       checklistProvider.updateSelectedChecklist(id, silent: true);
     });
+    Navigator.of(context).pushNamed(DetailChecklistPage.routeName);
+  }
+
+  void _onListEntryTapped(Checklist cl) {
+    checklistProvider.updateSelectedChecklist(cl.id, silent: true);
     Navigator.of(context).pushNamed(DetailChecklistPage.routeName);
   }
 }

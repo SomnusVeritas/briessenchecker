@@ -73,7 +73,19 @@ class DbHelper {
   }
 
   static Future<Checklist> getChecklistById(int id) async {
-    return ed.checklists.first;
+    final res = await _client
+        .from(checklistsTableName)
+        .select<Map<String, dynamic>>()
+        .eq('id', id)
+        .single();
+    return Checklist(
+      res['id'],
+      res['ownerId'],
+      res['title'],
+      res['description'],
+      DateTime.parse(res['createdTime']),
+      [],
+    );
   }
 
   static Future<void> addOrUpdateItem(
