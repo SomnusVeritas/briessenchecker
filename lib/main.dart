@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gotrue/src/types/auth_state.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'pages/dashboard_page.dart';
+import 'pages/landing_page.dart';
 import 'pages/login_page.dart';
 
 void main() async {
@@ -12,20 +14,11 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-  @override
   Widget build(BuildContext context) {
-    String initialRoute =
-        isLoggedIn ? LoginPage.routeName : LoginPage.routeName;
-    DbHelper.authChangeEventStream.listen(_onAuthEvent);
     return MaterialApp(
       title: 'Briessenchecker',
       theme: ThemeData.dark(
@@ -33,18 +26,12 @@ class _MyAppState extends State<MyApp> {
       ).copyWith(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: initialRoute,
+      initialRoute: '/',
       routes: {
+        LandingPage.routeName: (context) => const LandingPage(),
         LoginPage.routeName: (context) => const LoginPage(),
+        DashboardPage.routeName: (context) => const DashboardPage(),
       },
     );
-  }
-
-  void _onAuthEvent(AuthState event) {
-    if (event.event == AuthChangeEvent.signedIn) {
-      setState(() => isLoggedIn = true);
-    } else if (event.event == AuthChangeEvent.signedOut) {
-      setState(() => isLoggedIn = false);
-    }
   }
 }

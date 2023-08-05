@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
+  static const routeName = '/dashboard';
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Text('Dash'),
+    );
   }
 }
