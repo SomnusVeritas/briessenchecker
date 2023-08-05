@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../assets/example_data.dart' as ed;
 import '../models/checklist.dart';
+import '../models/listitem.dart';
 
 class DbHelper {
   static late final SupabaseClient _client;
@@ -36,6 +37,11 @@ class DbHelper {
 
   static Future<Checklist> getChecklistById(int id) async {
     return ed.checklists.first;
+  }
+
+  static Future<void> addOrUpdateItem(
+      int checklistId, String title, String description, int? itemId) async {
+    // TODO implement addOrUpdateItem
   }
 
   static Stream<AuthState> get authChangeEventStream =>
