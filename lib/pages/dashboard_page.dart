@@ -20,6 +20,10 @@ class _DashboardPageState extends State<DashboardPage> {
         future: checklistFuture,
         builder: _futureBuilder,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onAddTapped,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -42,5 +46,9 @@ class _DashboardPageState extends State<DashboardPage> {
       title: Text(cl.title),
       subtitle: Text(cl.description),
     );
+  }
+
+  void _onAddTapped() {
+    DbHelper.addChecklist().then((id) {});
   }
 }

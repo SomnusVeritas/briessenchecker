@@ -1,3 +1,4 @@
+import 'package:briessenchecker/pages/edit_checklist_page.dart';
 import 'package:briessenchecker/services/dbhelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         LandingPage.routeName: (context) => const LandingPage(),
         LoginPage.routeName: (context) => const LoginPage(),
         DashboardPage.routeName: (context) => const DashboardPage(),
+        EditChecklistPage.routeName: (context) => const EditChecklistPage(),
       },
     );
   }
