@@ -1,9 +1,6 @@
 import 'package:briessenchecker/services/dbhelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:gotrue/src/types/auth_state.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'pages/dashboard_page.dart';
 import 'pages/landing_page.dart';
 import 'pages/login_page.dart';

@@ -7,8 +7,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
     return Scaffold(
       body: Form(
         child: Column(
@@ -16,16 +16,16 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              controller: _emailController,
+              controller: emailController,
               decoration: const InputDecoration(label: Text('Email')),
             ),
             TextFormField(
-              controller: _passwordController,
+              controller: passwordController,
               decoration: const InputDecoration(label: Text('Password')),
             ),
             FloatingActionButton.extended(
                 onPressed: () => _loginSubmitted(
-                    _emailController.text, _passwordController.text),
+                    emailController.text, passwordController.text),
                 label: const Text('Login'))
           ],
         ),
