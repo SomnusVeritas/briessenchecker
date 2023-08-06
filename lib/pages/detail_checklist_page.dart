@@ -23,7 +23,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   List<Item> _items = [];
   int? _selectedItemId;
   String? pageTitle;
-  List<int> selectedItems = [];
+  List<int> selectedItemIndexes = [];
 
   @override
   void dispose() {
@@ -137,7 +137,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       appBar: AppBar(
         title: Text(pageTitle ?? ''),
         actions: [
-          if (selectedItems.isNotEmpty)
+          if (selectedItemIndexes.isNotEmpty)
             IconButton(
                 onPressed: _onDeleteItemsPressed,
                 icon: const Icon(Icons.delete))
@@ -161,7 +161,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       onTap: () => _itemTapped(index),
       itemSelectionChanged: (isSelected) =>
           _itemSelectionChanged(isSelected, index),
-      selectionMode: selectedItems.isNotEmpty,
+      selectionMode: selectedItemIndexes.isNotEmpty,
     );
   }
 
@@ -175,14 +175,20 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   void _itemSelectionChanged(bool isSelected, int index) {
     if (isSelected) {
       setState(() {
-        selectedItems.add(index);
+        selectedItemIndexes.add(index);
       });
     } else {
       setState(() {
-        selectedItems.remove(index);
+        selectedItemIndexes.remove(index);
       });
     }
   }
 
-  void _onDeleteItemsPressed() {}
+  void _onDeleteItemsPressed() {
+    List<int> itemIds = [];
+    for (final itemIndex in selectedItemIndexes) {
+      itemIds.add(_items.elementAt(itemIndex).id!);
+    }
+    DbHelper.deleteItemsById(itemIds);
+  }
 }
