@@ -148,6 +148,11 @@ class DbHelper {
     await _client.from(itemsTableName).delete().in_('id', ids);
   }
 
+  static Future<void> deleteChecklistByid(int id) async {
+    await _client.from(itemsTableName).delete().eq('checklist_id', id);
+    await _client.from(checklistsTableName).delete().eq('id', id);
+  }
+
   static Stream<AuthState> get authChangeEventStream =>
       _client.auth.onAuthStateChange;
 }
