@@ -53,7 +53,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
             height: 500,
             child: ListView.builder(
               itemCount: _items.length,
-              itemBuilder: _itemList,
+              itemBuilder: _itemListBuilder,
             ),
           ),
         ],
@@ -66,14 +66,25 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   }
 
   void _addItemTapped() {
-    showDialog(context: context, builder: _addItemDialog);
+    showDialog(
+        context: context,
+        builder: (context) => _itemDetailDialog(context, null));
   }
 
-  Widget _addItemDialog(BuildContext context) {
+  void _itemTapped(int index) {
+    _selectedItemId = _items.elementAt(index).id;
+    showDialog(
+        context: context,
+        builder: (context) => _itemDetailDialog(context, index)).whenComplete(
+      () => _selectedItemId = null,
+    );
+  }
+
+  Widget _itemDetailDialog(BuildContext context, int? index) {
     TextEditingController titleCon = TextEditingController();
     TextEditingController descCon = TextEditingController();
     if (_selectedItemId != null) {
-      final item = _items.elementAt(_selectedItemId!);
+      final item = _items.elementAt(index!);
       titleCon.text = item.title;
       descCon.text = item.description;
     }
@@ -97,6 +108,11 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         ],
       ),
       actions: [
+        if (_selectedItemId != null)
+          TextButton(
+            onPressed: () => DbHelper.deleteItemById(_selectedItemId!),
+            child: const Text('delete'),
+          ),
         TextButton(
           onPressed: () {
             _itemSaved(titleCon.text, descCon.text);
@@ -114,7 +130,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       title,
       description,
       _selectedItemId,
-    ).onError((error, stackTrace) => print(error));
+    );
   }
 
   @override
@@ -134,10 +150,11 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     );
   }
 
-  Widget? _itemList(BuildContext context, int index) {
+  Widget? _itemListBuilder(BuildContext context, int index) {
     return ListTile(
       title: Text(_items.elementAt(index).title),
       subtitle: Text(_items.elementAt(index).description),
+      onTap: () => _itemTapped(index),
     );
   }
 

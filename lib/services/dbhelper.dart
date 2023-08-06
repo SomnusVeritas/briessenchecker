@@ -137,6 +137,10 @@ class DbHelper {
     );
   }
 
+  static Future<void> deleteItemById(int id) async {
+    await _client.from(itemsTableName).delete().eq('id', id);
+  }
+
   static Stream<AuthState> get authChangeEventStream =>
       _client.auth.onAuthStateChange;
 }
