@@ -38,10 +38,10 @@ class DbHelper {
     for (final element in res) {
       Checklist cl = Checklist(
         element['id'],
-        element['ownerId'],
+        element['owner_id'],
         element['title'],
         element['description'],
-        DateTime.parse(element['createdTime']),
+        DateTime.parse(element['created_time']),
       );
       checklists.add(cl);
     }
@@ -53,7 +53,7 @@ class DbHelper {
     final ownerId = _client.auth.currentSession!.user.id;
 
     Map<String, dynamic> upsertMap = {
-      'ownerId': ownerId,
+      'owner_id': ownerId,
     };
     if (checklist != null) {
       List<MapEntry<String, dynamic>> entries = [
@@ -71,6 +71,32 @@ class DbHelper {
     return res.last['id'] as int;
   }
 
+  static Future<void> addOrUpdateItem(
+    int checklistId,
+    String title,
+    String description,
+    int? itemId,
+  ) async {
+    try {
+      final ownerId = _client.auth.currentSession!.user.id;
+
+      Map<String, dynamic> upsertMap = {
+        'checklist_id': checklistId,
+        'owner_id': ownerId,
+        'title': title,
+        'description': description,
+      };
+      if (itemId != null) {
+        upsertMap.addEntries([
+          MapEntry('id', itemId),
+        ]);
+      }
+      await _client.from(itemsTableName).upsert(upsertMap);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   static Future<List<Item>> getItemsByChecklistId(int checklistId) async {
     final List<Item> items = [];
 
@@ -86,7 +112,7 @@ class DbHelper {
           item['owner_id'],
           item['title'],
           item['description'],
-          DateTime.parse(item['createdTime']),
+          DateTime.parse(item['created_time']),
           null,
         ),
       );
@@ -104,16 +130,11 @@ class DbHelper {
 
     return Checklist(
       checklistRes['id'],
-      checklistRes['ownerId'],
+      checklistRes['owner_id'],
       checklistRes['title'],
       checklistRes['description'],
-      DateTime.parse(checklistRes['createdTime']),
+      DateTime.parse(checklistRes['created_time']),
     );
-  }
-
-  static Future<void> addOrUpdateItem(
-      int checklistId, String title, String description, int? itemId) async {
-    // TODO implement addOrUpdateItem
   }
 
   static Stream<AuthState> get authChangeEventStream =>

@@ -109,8 +109,12 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   }
 
   void _itemSaved(String title, String description) {
-    DbHelper.addOrUpdateItem(_checklistProvider.selectedChecklistId!, title,
-        description, _selectedItemId);
+    DbHelper.addOrUpdateItem(
+      _checklistProvider.selectedChecklistId!,
+      title,
+      description,
+      _selectedItemId,
+    ).onError((error, stackTrace) => print(error));
   }
 
   @override
