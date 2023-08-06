@@ -115,7 +115,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _onClChanged(List<Map<String, dynamic>> res) {
-    checklists = DbHelper.resToList(res);
+    checklists = DbHelper.resToChecklistList(res);
   }
 
   Widget _streamBuilder(
@@ -123,7 +123,7 @@ class _DashboardPageState extends State<DashboardPage> {
       AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
       List<Checklist> checklists) {
     if (snapshot.hasData) {
-      checklists = DbHelper.resToList(snapshot.data!);
+      checklists = DbHelper.resToChecklistList(snapshot.data!);
     }
 
     return ListView.builder(

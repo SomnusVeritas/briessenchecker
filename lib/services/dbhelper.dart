@@ -179,7 +179,11 @@ class DbHelper {
           .from(checklistsTableName)
           .stream(primaryKey: ['id']).eq('id', clProvider?.selectedChecklistId);
 
-  static List<Checklist> resToList(List<Map<String, dynamic>> res) {
+  static Stream<List<Map<String, dynamic>>> get itemsChangeEventStream =>
+      _client.from(itemsTableName).stream(primaryKey: ['id']).eq(
+          'checklist_id', clProvider?.selectedChecklistId);
+
+  static List<Checklist> resToChecklistList(List<Map<String, dynamic>> res) {
     List<Checklist> checklists = [];
     for (final element in res) {
       Checklist cl = Checklist(
@@ -192,5 +196,23 @@ class DbHelper {
       checklists.add(cl);
     }
     return checklists;
+  }
+
+  static List<Item> resToItemList(List<Map<String, dynamic>> res) {
+    final List<Item> items = [];
+
+    for (final item in res) {
+      items.add(
+        Item(
+          item['id'],
+          item['owner_id'],
+          item['title'],
+          item['description'],
+          DateTime.parse(item['created_time']),
+          null,
+        ),
+      );
+    }
+    return items;
   }
 }

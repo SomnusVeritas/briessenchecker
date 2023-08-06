@@ -10,19 +10,28 @@ class ItemListTile extends StatefulWidget {
     required this.onTap,
     required this.itemSelectionChanged,
     required this.selectionMode,
+    this.isSelected = false,
   });
   final String title;
   final String description;
   final bool selectionMode;
   final VoidCallback onTap;
   final BoolCallback itemSelectionChanged;
+  final bool isSelected;
 
   @override
   State<ItemListTile> createState() => _ItemListTileState();
 }
 
 class _ItemListTileState extends State<ItemListTile> {
-  bool isSelected = false;
+  late bool isSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    isSelected = widget.isSelected;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(

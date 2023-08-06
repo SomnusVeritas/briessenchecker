@@ -23,6 +23,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   Checklist? _checklist;
   late Future<List<Object>> _checklistFutures;
   late final ChecklistProvider _checklistProvider;
+  TextEditingController titleController = TextEditingController();
   List<Item> _items = [];
   int? _selectedItemId;
   bool _titleEditMode = false;
@@ -52,23 +53,11 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     if (snapshot.hasData) {
       _checklist = snapshot.data!.first as Checklist;
       _items = snapshot.data!.last as List<Item>;
-      String title = _checklist!.title;
-      if (pageTitle == null) {
-        WidgetsBinding.instance
-            .addPostFrameCallback((_) => setState(() => pageTitle = title));
-      }
-      return Column(
-        children: [
-          Text(_checklist!.description),
-          SizedBox(
-            width: 500,
-            height: 500,
-            child: ListView.builder(
-              itemCount: _items.length,
-              itemBuilder: _itemListBuilder,
-            ),
-          ),
-        ],
+      return StreamBuilder(
+        stream: DbHelper.itemsChangeEventStream,
+        builder: (BuildContext context,
+                AsyncSnapshot<List<Map<String, dynamic>>> snapshot) =>
+            _streamBuilder(context, snapshot, _checklist, _items),
       );
     } else if (snapshot.hasError) {
       return Text('Ooooops, ${snapshot.error}');
@@ -172,35 +161,17 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   }
 
   Widget get _pageTitleBuilder {
-    TextEditingController titleController = TextEditingController();
     if (!_titleEditMode) {
       return GestureDetector(
           onTap: () => setState(() => _titleEditMode = true),
           child: Text(pageTitle ?? ''));
     } else {
       titleController.text = pageTitle ?? '';
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 300,
-            height: Theme.of(context).appBarTheme.toolbarHeight,
-            child: TextField(
-              autofocus: true,
-              controller: titleController,
-            ),
-          ),
-          IconButton(
-            onPressed: () => _onTitleChanged(
-              _checklist!.id,
-              titleController.text,
-            ),
-            icon: const Icon(Icons.check),
-          ),
-          IconButton(
-              onPressed: () => setState(() => _titleEditMode = false),
-              icon: const Icon(Icons.cancel_outlined))
-        ],
+      return Expanded(
+        child: TextField(
+          autofocus: true,
+          controller: titleController,
+        ),
       );
     }
   }
@@ -219,10 +190,22 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       appBar: AppBar(
         title: _pageTitleBuilder,
         actions: [
-          if (selectedItemIndexes.isNotEmpty)
+          if (selectedItemIndexes.isNotEmpty && !_titleEditMode)
             IconButton(
                 onPressed: _onDeleteItemsPressed,
-                icon: const Icon(Icons.delete))
+                icon: const Icon(Icons.delete)),
+          if (_titleEditMode)
+            IconButton(
+              onPressed: () => _onTitleChanged(
+                _checklist!.id,
+                titleController.text,
+              ),
+              icon: const Icon(Icons.check),
+            ),
+          if (_titleEditMode)
+            IconButton(
+                onPressed: () => setState(() => _titleEditMode = false),
+                icon: const Icon(Icons.cancel_outlined)),
         ],
       ),
       body: FutureBuilder(
@@ -233,6 +216,33 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         onPressed: _addItemTapped,
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  _streamBuilder(
+      BuildContext context,
+      AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
+      Checklist? checklist,
+      List<Item> items) {
+    if (pageTitle != _checklist!.title) {
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => setState(() => pageTitle = _checklist!.title));
+    }
+    if (snapshot.hasData) {
+      _items = DbHelper.resToItemList(snapshot.data!);
+    }
+    return Column(
+      children: [
+        Text(_checklist!.description),
+        SizedBox(
+          width: 500,
+          height: 500,
+          child: ListView.builder(
+            itemCount: _items.length,
+            itemBuilder: _itemListBuilder,
+          ),
+        ),
+      ],
     );
   }
 }
