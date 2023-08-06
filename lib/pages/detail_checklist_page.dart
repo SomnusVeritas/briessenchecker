@@ -19,11 +19,11 @@ class DetailChecklistPage extends StatefulWidget {
 class _DetailChecklistPageState extends State<DetailChecklistPage> {
   String? pageTitle;
   List<int> selectedItemIndexes = [];
+  TextEditingController titleController = TextEditingController();
 
   Checklist? _checklist;
   late Future<List<Object>> _checklistFutures;
   late final ChecklistProvider _checklistProvider;
-  TextEditingController titleController = TextEditingController();
   List<Item> _items = [];
   int? _selectedItemId;
   bool _titleEditMode = false;
@@ -187,6 +187,33 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     });
   }
 
+  _streamBuilder(
+      BuildContext context,
+      AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
+      Checklist? checklist,
+      List<Item> items) {
+    if (pageTitle != _checklist!.title) {
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => setState(() => pageTitle = _checklist!.title));
+    }
+    if (snapshot.hasData) {
+      _items = DbHelper.resToItemList(snapshot.data!);
+    }
+    return Column(
+      children: [
+        Text(_checklist!.description),
+        SizedBox(
+          width: 500,
+          height: 500,
+          child: ListView.builder(
+            itemCount: _items.length,
+            itemBuilder: _itemListBuilder,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,33 +246,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         onPressed: _addItemTapped,
         child: const Icon(Icons.add),
       ),
-    );
-  }
-
-  _streamBuilder(
-      BuildContext context,
-      AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
-      Checklist? checklist,
-      List<Item> items) {
-    if (pageTitle != _checklist!.title) {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (_) => setState(() => pageTitle = _checklist!.title));
-    }
-    if (snapshot.hasData) {
-      _items = DbHelper.resToItemList(snapshot.data!);
-    }
-    return Column(
-      children: [
-        Text(_checklist!.description),
-        SizedBox(
-          width: 500,
-          height: 500,
-          child: ListView.builder(
-            itemCount: _items.length,
-            itemBuilder: _itemListBuilder,
-          ),
-        ),
-      ],
     );
   }
 }
