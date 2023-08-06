@@ -89,7 +89,9 @@ class _DashboardPageState extends State<DashboardPage> {
   void _onDeleteTapped() {
     DbHelper.deleteChecklistByid(
         checklists.elementAt(_selectedChecklistIndex!).id);
-    _selectedChecklistIndex = null;
+    setState(() {
+      _selectedChecklistIndex = null;
+    });
   }
 
   @override
