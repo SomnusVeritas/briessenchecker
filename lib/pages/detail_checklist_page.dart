@@ -158,6 +158,9 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       itemIds.add(_items.elementAt(itemIndex).id!);
     }
     DbHelper.deleteItemsById(itemIds);
+    setState(() {
+      selectedItemIndexes = [];
+    });
   }
 
   Widget get _pageTitleBuilder {
