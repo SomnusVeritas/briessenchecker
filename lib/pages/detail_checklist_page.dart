@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:briessenchecker/models/checklist.dart';
 import 'package:briessenchecker/models/listitem.dart';
 import 'package:briessenchecker/services/checklist_provider.dart';
@@ -49,7 +47,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       }
       return Column(
         children: [
-          Text(title == '' ? 'Unnamed ${_checklist!.id}' : title),
           Text(_checklist!.description),
           SizedBox(
             width: 500,
@@ -62,7 +59,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         ],
       );
     } else if (snapshot.hasError) {
-      return Text(snapshot.error.toString());
+      return Text('Ooooops, ${snapshot.error}');
     } else {
       return const CircularProgressIndicator();
     }
