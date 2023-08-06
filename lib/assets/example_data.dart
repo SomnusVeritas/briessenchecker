@@ -7,6 +7,5 @@ List<Checklist> checklists = [
     'Test1',
     'tiersntiersntsrien',
     DateTime.now(),
-    List.empty(),
   )
 ];

@@ -1,14 +1,14 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../assets/example_data.dart' as ed;
 import '../models/checklist.dart';
 import '../models/listitem.dart';
 
 class DbHelper {
-  static late final SupabaseClient _client;
+  static const checkedItemsTableName = 'checkedItems';
   static const checklistsTableName = 'checklists';
   static const itemsTableName = 'items';
-  static const checkedItemsTableName = 'checkedItems';
+
+  static late final SupabaseClient _client;
 
   static Future<void> init() async {
     await Supabase.initialize(
@@ -42,7 +42,6 @@ class DbHelper {
         element['title'],
         element['description'],
         DateTime.parse(element['createdTime']),
-        [],
       );
       checklists.add(cl);
     }
@@ -72,19 +71,43 @@ class DbHelper {
     return res.last['id'] as int;
   }
 
+  static Future<List<Item>> getItemsByChecklistId(int checklist_id) async {
+    final List<Item> items = [];
+
+    final itemRes = await _client
+        .from(itemsTableName)
+        .select<List<Map<String, dynamic>>>()
+        .eq('checklist_id', checklist_id);
+
+    for (final item in itemRes) {
+      items.add(
+        Item(
+          item['id'],
+          item['owner_id'],
+          item['title'],
+          item['description'],
+          DateTime.parse(item['createdTime']),
+          null,
+        ),
+      );
+    }
+
+    return items;
+  }
+
   static Future<Checklist> getChecklistById(int id) async {
-    final res = await _client
+    final checklistRes = await _client
         .from(checklistsTableName)
         .select<Map<String, dynamic>>()
         .eq('id', id)
         .single();
+
     return Checklist(
-      res['id'],
-      res['ownerId'],
-      res['title'],
-      res['description'],
-      DateTime.parse(res['createdTime']),
-      [],
+      checklistRes['id'],
+      checklistRes['ownerId'],
+      checklistRes['title'],
+      checklistRes['description'],
+      DateTime.parse(checklistRes['createdTime']),
     );
   }
 

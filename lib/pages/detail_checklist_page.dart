@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:briessenchecker/models/checklist.dart';
 import 'package:briessenchecker/models/listitem.dart';
 import 'package:briessenchecker/services/checklist_provider.dart';
@@ -15,10 +17,12 @@ class DetailChecklistPage extends StatefulWidget {
 }
 
 class _DetailChecklistPageState extends State<DetailChecklistPage> {
-  late Future<Checklist> _checklistFuture;
+  late Future<List<Object>> _checklistFutures;
   late final ChecklistProvider _checklistProvider;
-  late Checklist _currentChecklist;
+  Checklist? _checklist;
+  List<Item> _items = [];
   int? _selectedItemId;
+  String? pageTitle;
 
   @override
   void dispose() {
@@ -30,19 +34,31 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   void initState() {
     super.initState();
     _checklistProvider = Provider.of<ChecklistProvider>(context, listen: false);
-    _checklistFuture =
-        DbHelper.getChecklistById(_checklistProvider.selectedChecklistId!);
+    _checklistFutures = initFutures(_checklistProvider.selectedChecklistId!);
   }
 
   Widget _futureBuilder(
-      BuildContext context, AsyncSnapshot<Checklist> snapshot) {
+      BuildContext context, AsyncSnapshot<List<Object>> snapshot) {
     if (snapshot.hasData) {
-      _currentChecklist = snapshot.data!;
-      String title = _currentChecklist.title;
+      _checklist = snapshot.data!.first as Checklist;
+      _items = snapshot.data!.last as List<Item>;
+      String title = _checklist!.title;
+      if (pageTitle == null) {
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) => setState(() => pageTitle = title));
+      }
       return Column(
         children: [
-          Text(title == '' ? 'Unnamed ${_currentChecklist.id}' : title),
-          Text(_currentChecklist.description),
+          Text(title == '' ? 'Unnamed ${_checklist!.id}' : title),
+          Text(_checklist!.description),
+          SizedBox(
+            width: 500,
+            height: 500,
+            child: ListView.builder(
+              itemCount: _items.length,
+              itemBuilder: _itemList,
+            ),
+          ),
         ],
       );
     } else if (snapshot.hasError) {
@@ -60,7 +76,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     TextEditingController titleCon = TextEditingController();
     TextEditingController descCon = TextEditingController();
     if (_selectedItemId != null) {
-      final item = _currentChecklist.items.elementAt(_selectedItemId!);
+      final item = _items.elementAt(_selectedItemId!);
       titleCon.text = item.title;
       descCon.text = item.description;
     }
@@ -103,8 +119,11 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(pageTitle ?? ''),
+      ),
       body: FutureBuilder(
-        future: _checklistFuture,
+        future: _checklistFutures,
         builder: _futureBuilder,
       ),
       floatingActionButton: FloatingActionButton(
@@ -112,5 +131,19 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Widget? _itemList(BuildContext context, int index) {
+    return ListTile(
+      title: Text(_items.elementAt(index).title),
+      subtitle: Text(_items.elementAt(index).description),
+    );
+  }
+
+  Future<List<Object>> initFutures(int checklistId) async {
+    return Future.wait([
+      DbHelper.getChecklistById(checklistId),
+      DbHelper.getItemsByChecklistId(checklistId),
+    ]);
   }
 }
