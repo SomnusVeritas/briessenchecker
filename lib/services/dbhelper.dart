@@ -71,13 +71,13 @@ class DbHelper {
     return res.last['id'] as int;
   }
 
-  static Future<List<Item>> getItemsByChecklistId(int checklist_id) async {
+  static Future<List<Item>> getItemsByChecklistId(int checklistId) async {
     final List<Item> items = [];
 
     final itemRes = await _client
         .from(itemsTableName)
         .select<List<Map<String, dynamic>>>()
-        .eq('checklist_id', checklist_id);
+        .eq('checklist_id', checklistId);
 
     for (final item in itemRes) {
       items.add(
