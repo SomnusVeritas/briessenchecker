@@ -5,6 +5,8 @@ import 'package:briessenchecker/services/dbhelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/item_list_tile.dart';
+
 class DetailChecklistPage extends StatefulWidget {
   const DetailChecklistPage({super.key});
 
@@ -21,6 +23,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   List<Item> _items = [];
   int? _selectedItemId;
   String? pageTitle;
+  List<int> selectedItems = [];
 
   @override
   void dispose() {
@@ -108,11 +111,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         ],
       ),
       actions: [
-        if (_selectedItemId != null)
-          TextButton(
-            onPressed: () => DbHelper.deleteItemById(_selectedItemId!),
-            child: const Text('delete'),
-          ),
         TextButton(
           onPressed: () {
             _itemSaved(titleCon.text, descCon.text);
@@ -138,6 +136,12 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle ?? ''),
+        actions: [
+          if (selectedItems.isNotEmpty)
+            IconButton(
+                onPressed: _onDeleteItemsPressed,
+                icon: const Icon(Icons.delete))
+        ],
       ),
       body: FutureBuilder(
         future: _checklistFutures,
@@ -151,10 +155,13 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   }
 
   Widget? _itemListBuilder(BuildContext context, int index) {
-    return ListTile(
-      title: Text(_items.elementAt(index).title),
-      subtitle: Text(_items.elementAt(index).description),
+    return ItemListTile(
+      title: _items.elementAt(index).title,
+      description: _items.elementAt(index).description,
       onTap: () => _itemTapped(index),
+      itemSelectionChanged: (isSelected) =>
+          _itemSelectionChanged(isSelected, index),
+      selectionMode: selectedItems.isNotEmpty,
     );
   }
 
@@ -164,4 +171,18 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       DbHelper.getItemsByChecklistId(checklistId),
     ]);
   }
+
+  void _itemSelectionChanged(bool isSelected, int index) {
+    if (isSelected) {
+      setState(() {
+        selectedItems.add(index);
+      });
+    } else {
+      setState(() {
+        selectedItems.remove(index);
+      });
+    }
+  }
+
+  void _onDeleteItemsPressed() {}
 }
