@@ -15,9 +15,10 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final Future<List<Checklist>> checklistFuture = DbHelper.fetchChecklist;
+  Future<List<Checklist>> checklistFuture = DbHelper.fetchChecklist;
   late List<Checklist> checklists;
   late ChecklistProvider checklistProvider;
+  late Stream<List<Map<String, dynamic>>> clChangeStream;
 
   int? _selectedChecklistIndex;
 
@@ -39,11 +40,10 @@ class _DashboardPageState extends State<DashboardPage> {
       BuildContext context, AsyncSnapshot<List<Checklist>> snapshot) {
     if (snapshot.hasData) {
       checklists = snapshot.data!;
-      return ListView.builder(
-        itemCount: snapshot.data!.length,
-        itemBuilder: (context, index) =>
-            _listBuilder(context, index, snapshot.data!),
-      );
+      return StreamBuilder(
+          stream: DbHelper.checklistChangeEventStream,
+          builder: (context, snapshot) =>
+              _streamBuilder(context, snapshot, checklists));
     } else if (snapshot.hasError) {
       return Text(snapshot.error.toString());
     } else {
@@ -89,11 +89,14 @@ class _DashboardPageState extends State<DashboardPage> {
   void _onDeleteTapped() {
     DbHelper.deleteChecklistByid(
         checklists.elementAt(_selectedChecklistIndex!).id);
+    _selectedChecklistIndex = null;
   }
 
   @override
   Widget build(BuildContext context) {
     checklistProvider = Provider.of<ChecklistProvider>(context, listen: true);
+    clChangeStream = DbHelper.checklistChangeEventStream;
+    clChangeStream.listen(_onClChanged);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Brießenchecker9000'),
@@ -109,5 +112,23 @@ class _DashboardPageState extends State<DashboardPage> {
           builder: _futureBuilder,
         ),
         floatingActionButton: _fabBuilder);
+  }
+
+  void _onClChanged(List<Map<String, dynamic>> res) {
+    checklists = DbHelper.resToList(res);
+  }
+
+  Widget _streamBuilder(
+      BuildContext context,
+      AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
+      List<Checklist> checklists) {
+    if (snapshot.hasData) {
+      checklists = DbHelper.resToList(snapshot.data!);
+    }
+
+    return ListView.builder(
+      itemCount: checklists.length,
+      itemBuilder: (context, index) => _listBuilder(context, index, checklists),
+    );
   }
 }

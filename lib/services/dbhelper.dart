@@ -1,8 +1,11 @@
+import 'package:briessenchecker/services/checklist_provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/checklist.dart';
 import '../models/listitem.dart';
+import 'package:provider/provider.dart' as provider;
 
 class DbHelper {
   static const checkedItemsTableName = 'checkedItems';
@@ -10,12 +13,18 @@ class DbHelper {
   static const itemsTableName = 'items';
 
   static late final SupabaseClient _client;
+  static ChecklistProvider? clProvider;
 
   static Future<void> init() async {
     await Supabase.initialize(
         url: dotenv.env['SUPABASE_URL'] ?? '',
         anonKey: dotenv.env['SUPABASE_ANON'] ?? '');
     _client = Supabase.instance.client;
+  }
+
+  static void initStreams(BuildContext context) {
+    clProvider =
+        provider.Provider.of<ChecklistProvider>(context, listen: false);
   }
 
   static Future<void> login(String email, String password) async {
@@ -161,4 +170,27 @@ class DbHelper {
 
   static Stream<AuthState> get authChangeEventStream =>
       _client.auth.onAuthStateChange;
+
+  static Stream<List<Map<String, dynamic>>> get checklistChangeEventStream =>
+      _client.from(checklistsTableName).stream(primaryKey: ['id']);
+
+  static Stream<List<Map<String, dynamic>>>
+      get selectedChecklistChangeEventStreamById => _client
+          .from(checklistsTableName)
+          .stream(primaryKey: ['id']).eq('id', clProvider?.selectedChecklistId);
+
+  static List<Checklist> resToList(List<Map<String, dynamic>> res) {
+    List<Checklist> checklists = [];
+    for (final element in res) {
+      Checklist cl = Checklist(
+        element['id'],
+        element['owner_id'],
+        element['title'],
+        element['description'],
+        DateTime.parse(element['created_time']),
+      );
+      checklists.add(cl);
+    }
+    return checklists;
+  }
 }

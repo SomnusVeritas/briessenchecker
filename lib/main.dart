@@ -16,6 +16,13 @@ void main() async {
     ChangeNotifierProvider(
       create: (_) => ChecklistProvider(),
     ),
+    StreamProvider.value(
+      value: DbHelper.checklistChangeEventStream,
+      initialData: null,
+    ),
+    StreamProvider.value(
+        value: DbHelper.selectedChecklistChangeEventStreamById,
+        initialData: null),
   ], child: const MyApp()));
 }
 
@@ -24,6 +31,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DbHelper.initStreams(context);
+
     return MaterialApp(
       title: 'Briessenchecker',
       theme: ThemeData.dark(
