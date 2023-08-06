@@ -49,6 +49,12 @@ class DbHelper {
     return checklists;
   }
 
+  static Future<void> updateChecklistTitle(int id, String title) async {
+    await _client
+        .from(checklistsTableName)
+        .update({'title': title}).eq('id', id);
+  }
+
   /// returns id of newly created checklist
   static Future<int> addOrUpdateChecklist(Checklist? checklist) async {
     final ownerId = _client.auth.currentSession!.user.id;

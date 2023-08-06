@@ -17,13 +17,15 @@ class DetailChecklistPage extends StatefulWidget {
 }
 
 class _DetailChecklistPageState extends State<DetailChecklistPage> {
-  late Future<List<Object>> _checklistFutures;
-  late final ChecklistProvider _checklistProvider;
-  Checklist? _checklist;
-  List<Item> _items = [];
-  int? _selectedItemId;
   String? pageTitle;
   List<int> selectedItemIndexes = [];
+
+  Checklist? _checklist;
+  late Future<List<Object>> _checklistFutures;
+  late final ChecklistProvider _checklistProvider;
+  List<Item> _items = [];
+  int? _selectedItemId;
+  bool _titleEditMode = false;
 
   @override
   void dispose() {
@@ -36,6 +38,13 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     super.initState();
     _checklistProvider = Provider.of<ChecklistProvider>(context, listen: false);
     _checklistFutures = initFutures(_checklistProvider.selectedChecklistId!);
+  }
+
+  Future<List<Object>> initFutures(int checklistId) async {
+    return Future.wait([
+      DbHelper.getChecklistById(checklistId),
+      DbHelper.getItemsByChecklistId(checklistId),
+    ]);
   }
 
   Widget _futureBuilder(
@@ -131,29 +140,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(pageTitle ?? ''),
-        actions: [
-          if (selectedItemIndexes.isNotEmpty)
-            IconButton(
-                onPressed: _onDeleteItemsPressed,
-                icon: const Icon(Icons.delete))
-        ],
-      ),
-      body: FutureBuilder(
-        future: _checklistFutures,
-        builder: _futureBuilder,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addItemTapped,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
   Widget? _itemListBuilder(BuildContext context, int index) {
     return ItemListTile(
       title: _items.elementAt(index).title,
@@ -163,13 +149,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
           _itemSelectionChanged(isSelected, index),
       selectionMode: selectedItemIndexes.isNotEmpty,
     );
-  }
-
-  Future<List<Object>> initFutures(int checklistId) async {
-    return Future.wait([
-      DbHelper.getChecklistById(checklistId),
-      DbHelper.getItemsByChecklistId(checklistId),
-    ]);
   }
 
   void _itemSelectionChanged(bool isSelected, int index) {
@@ -190,5 +169,70 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       itemIds.add(_items.elementAt(itemIndex).id!);
     }
     DbHelper.deleteItemsById(itemIds);
+  }
+
+  Widget get _pageTitleBuilder {
+    TextEditingController titleController = TextEditingController();
+    if (!_titleEditMode) {
+      return GestureDetector(
+          onTap: () => setState(() => _titleEditMode = true),
+          child: Text(pageTitle ?? ''));
+    } else {
+      titleController.text = pageTitle ?? '';
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 300,
+            height: Theme.of(context).appBarTheme.toolbarHeight,
+            child: TextField(
+              autofocus: true,
+              controller: titleController,
+            ),
+          ),
+          IconButton(
+            onPressed: () => _onTitleChanged(
+              _checklist!.id,
+              titleController.text,
+            ),
+            icon: const Icon(Icons.check),
+          ),
+          IconButton(
+              onPressed: () => setState(() => _titleEditMode = false),
+              icon: const Icon(Icons.cancel_outlined))
+        ],
+      );
+    }
+  }
+
+  void _onTitleChanged(int id, String title) {
+    setState(() {
+      pageTitle = title;
+      _titleEditMode = false;
+      DbHelper.updateChecklistTitle(id, title);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: _pageTitleBuilder,
+        actions: [
+          if (selectedItemIndexes.isNotEmpty)
+            IconButton(
+                onPressed: _onDeleteItemsPressed,
+                icon: const Icon(Icons.delete))
+        ],
+      ),
+      body: FutureBuilder(
+        future: _checklistFutures,
+        builder: _futureBuilder,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addItemTapped,
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }
