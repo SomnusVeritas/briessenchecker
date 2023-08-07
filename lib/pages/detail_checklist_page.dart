@@ -198,10 +198,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       appBar: AppBar(
         title: _pageTitleBuilder,
         actions: [
-          if (selectedItemIndexes.isNotEmpty && !_titleEditMode)
-            IconButton(
-                onPressed: _onDeleteItemsPressed,
-                icon: const Icon(Icons.delete)),
           if (_titleEditMode)
             IconButton(
               onPressed: () => _onTitleChanged(
@@ -220,10 +216,24 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         future: _checklistFutures,
         builder: _futureBuilder,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _fabBuilder,
+    );
+  }
+
+  FloatingActionButton? get _fabBuilder {
+    if (_titleEditMode) {
+      return null;
+    }
+    if (selectedItemIndexes.isEmpty) {
+      return FloatingActionButton(
         onPressed: _addItemTapped,
         child: const Icon(Icons.add),
-      ),
+      );
+    }
+    return FloatingActionButton(
+      onPressed: _onDeleteItemsPressed,
+      backgroundColor: Theme.of(context).colorScheme.error,
+      child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
     );
   }
 
