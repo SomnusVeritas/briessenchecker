@@ -179,16 +179,9 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     if (snapshot.hasData) {
       _items = DbHelper.resToItemList(snapshot.data!);
     }
-    return Column(
-      children: [
-        Text(_checklist!.description),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _items.length,
-            itemBuilder: _itemListBuilder,
-          ),
-        ),
-      ],
+    return ListView.builder(
+      itemCount: _items.length,
+      itemBuilder: _itemListBuilder,
     );
   }
 
@@ -198,6 +191,9 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       appBar: AppBar(
         title: _pageTitleBuilder,
         actions: [
+          if (!_titleEditMode)
+            IconButton(
+                onPressed: _onInfoButtonPressed, icon: const Icon(Icons.info)),
           if (_titleEditMode)
             IconButton(
               onPressed: () => _onTitleChanged(
@@ -243,5 +239,37 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     } else {
       await DbHelper.deleteCheckedEntry(_checklist!.id, id!);
     }
+  }
+
+  void _onInfoButtonPressed() {
+    TextEditingController desCon = TextEditingController();
+    desCon.text = _checklist!.description;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_checklist!.title),
+        content: SizedBox(
+          width: 300,
+          child: DbHelper.isOwner(_checklist!.ownerId)
+              ? TextField(
+                  controller: desCon,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    label: Text('Description'),
+                  ),
+                )
+              : Text(_checklist!.description),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Ok'),
+          )
+        ],
+      ),
+    ).whenComplete(() {
+      DbHelper.updateChecklistDescription(_checklist!.id, desCon.text);
+      setState(() => _checklist!.description = desCon.text);
+    });
   }
 }
