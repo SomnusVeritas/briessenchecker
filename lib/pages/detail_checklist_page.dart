@@ -193,8 +193,10 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       Checklist? checklist,
       List<Item> items) {
     if (pageTitle != _checklist!.title) {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (_) => setState(() => pageTitle = _checklist!.title));
+      WidgetsBinding.instance.addPostFrameCallback((_) => setState(() =>
+          pageTitle = _checklist!.title == ''
+              ? 'Unnamed ${_checklist!.id}'
+              : _checklist!.title));
     }
     if (snapshot.hasData) {
       _items = DbHelper.resToItemList(snapshot.data!);
