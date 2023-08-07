@@ -27,6 +27,7 @@ class ItemListTile extends StatefulWidget {
 
 class _ItemListTileState extends State<ItemListTile> {
   late bool isChecked;
+  bool isSelected = false;
 
   @override
   void initState() {
@@ -41,25 +42,29 @@ class _ItemListTileState extends State<ItemListTile> {
       subtitle: Text(widget.description),
       onTap: _onTap,
       onLongPress: _onLongPress,
-      trailing: Checkbox(
-        value: isChecked,
-        onChanged: (value) {
-          setState(() => isChecked = value!);
-          widget.onCheckedChanged(value!);
-        },
+      selected: isSelected,
+      trailing: Visibility(
+        visible: !widget.selectionMode,
+        child: Checkbox(
+          value: isChecked,
+          onChanged: (value) {
+            setState(() => isChecked = value!);
+            widget.onCheckedChanged(value!);
+          },
+        ),
       ),
     );
   }
 
   void _onLongPress() {
-    setState(() => isChecked = true);
-    widget.itemSelectionChanged(isChecked);
+    setState(() => isSelected = !isSelected);
+    widget.itemSelectionChanged(isSelected);
   }
 
   void _onTap() {
-    if (isChecked || widget.selectionMode) {
-      setState(() => isChecked = !isChecked);
-      widget.itemSelectionChanged(isChecked);
+    if (isSelected || widget.selectionMode) {
+      setState(() => isSelected = !isSelected);
+      widget.itemSelectionChanged(isSelected);
     } else {
       widget.onTap();
     }

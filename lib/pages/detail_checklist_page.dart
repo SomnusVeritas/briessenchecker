@@ -105,12 +105,15 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         children: [
           TextFormField(
             controller: titleCon,
+            textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
               label: Text('Title'),
             ),
           ),
           TextFormField(
             controller: descCon,
+            onFieldSubmitted: (value) =>
+                _itemSaved(titleCon.text, descCon.text),
             decoration: const InputDecoration(
               label: Text('Description'),
             ),
@@ -121,7 +124,6 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
         TextButton(
           onPressed: () {
             _itemSaved(titleCon.text, descCon.text);
-            Navigator.of(context).pop();
           },
           child: const Text('save'),
         ),
@@ -136,6 +138,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       description,
       _selectedItemId,
     );
+    Navigator.of(context).pop();
   }
 
   Widget? _itemListBuilder(BuildContext context, int index) {
@@ -148,8 +151,8 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
           _itemSelectionChanged(isSelected, index),
       selectionMode: selectedItemIndexes.isNotEmpty,
       isChecked: _checkedItemIds.contains(item.id),
-      onCheckedChanged: (isSelected) =>
-          _onItemCheckedChanged(isSelected, item.id),
+      onCheckedChanged: (isChecked) =>
+          _onItemCheckedChanged(isChecked, item.id),
     );
   }
 
@@ -258,8 +261,8 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     );
   }
 
-  _onItemCheckedChanged(bool isSelected, int? id) async {
-    if (isSelected) {
+  _onItemCheckedChanged(bool isChecked, int? id) async {
+    if (isChecked) {
       await DbHelper.insertCheckedEntry(_checklist!.id, id!);
     } else {
       await DbHelper.deleteCheckedEntry(_checklist!.id, id!);
