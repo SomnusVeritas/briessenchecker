@@ -28,8 +28,8 @@ class DbHelper {
   }
 
   static Future<void> login(String email, String password) async {
-    email = 'sites@skup.in';
-    password = 'pass';
+    // email = 'sites@skup.in';
+    // password = 'pass';
     await _client.auth.signInWithPassword(
       email: email,
       password: password,
@@ -194,6 +194,7 @@ class DbHelper {
 
   static Future<void> deleteChecklistByid(int id) async {
     await _client.from(itemsTableName).delete().eq('checklist_id', id);
+    await _client.from(checkedItemsTableName).delete().eq('checklist_id', id);
     await _client.from(checklistsTableName).delete().eq('id', id);
   }
 
