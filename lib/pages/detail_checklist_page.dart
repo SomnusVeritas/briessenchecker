@@ -2,9 +2,11 @@ import 'package:briessenchecker/models/checklist.dart';
 import 'package:briessenchecker/models/listitem.dart';
 import 'package:briessenchecker/services/checklist_provider.dart';
 import 'package:briessenchecker/services/dbhelper.dart';
+import 'package:briessenchecker/widgets/item_detail_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../services/scaffold_messenger.dart';
 import '../widgets/item_list_tile.dart';
 
 class DetailChecklistPage extends StatefulWidget {
@@ -78,67 +80,19 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   void _addItemTapped() {
     showDialog(
         context: context,
-        builder: (context) => _itemDetailDialog(context, null));
+        builder: (context) => ItemDetailDialog(checklistId: _checklist!.id));
   }
 
   void _itemTapped(int index) {
     _selectedItemId = _items.elementAt(index).id;
     showDialog(
         context: context,
-        builder: (context) => _itemDetailDialog(context, index)).whenComplete(
+        builder: (context) => ItemDetailDialog(
+              checklistId: _checklist!.id,
+              item: _items.elementAt(index),
+            )).whenComplete(
       () => _selectedItemId = null,
     );
-  }
-
-  Widget _itemDetailDialog(BuildContext context, int? index) {
-    TextEditingController titleCon = TextEditingController();
-    TextEditingController descCon = TextEditingController();
-    if (_selectedItemId != null) {
-      final item = _items.elementAt(index!);
-      titleCon.text = item.title;
-      descCon.text = item.description;
-    }
-    return AlertDialog(
-      title: const Text('additem'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: titleCon,
-            textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              label: Text('Title'),
-            ),
-          ),
-          TextFormField(
-            controller: descCon,
-            onFieldSubmitted: (value) =>
-                _itemSaved(titleCon.text, descCon.text),
-            decoration: const InputDecoration(
-              label: Text('Description'),
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            _itemSaved(titleCon.text, descCon.text);
-          },
-          child: const Text('save'),
-        ),
-      ],
-    );
-  }
-
-  void _itemSaved(String title, String description) {
-    DbHelper.addOrUpdateItem(
-      _checklistProvider.selectedChecklistId!,
-      title,
-      description,
-      _selectedItemId,
-    );
-    Navigator.of(context).pop();
   }
 
   Widget? _itemListBuilder(BuildContext context, int index) {
@@ -170,8 +124,17 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
 
   void _onDeleteItemsPressed() {
     List<int> itemIds = [];
+    bool showErrorPrompt = false;
     for (final itemIndex in selectedItemIndexes) {
       itemIds.add(_items.elementAt(itemIndex).id!);
+      if (!showErrorPrompt) {
+        showErrorPrompt =
+            !DbHelper.isOwner(_items.elementAt(itemIndex).ownerId) &&
+                !DbHelper.isOwner(_checklist!.ownerId);
+      }
+    }
+    if (showErrorPrompt) {
+      Messenger.showError(context, 'Can\'t delete items that aren\'t yours.');
     }
     DbHelper.deleteItemsById(itemIds);
     setState(() {

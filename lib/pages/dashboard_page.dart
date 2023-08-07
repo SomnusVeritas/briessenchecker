@@ -2,6 +2,7 @@ import 'package:briessenchecker/models/checklist.dart';
 import 'package:briessenchecker/pages/detail_checklist_page.dart';
 import 'package:briessenchecker/services/checklist_provider.dart';
 import 'package:briessenchecker/services/dbhelper.dart';
+import 'package:briessenchecker/services/scaffold_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -87,8 +88,12 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _onDeleteTapped() {
-    DbHelper.deleteChecklistByid(
-        checklists.elementAt(_selectedChecklistIndex!).id);
+    final checklist = checklists.elementAt(_selectedChecklistIndex!);
+    DbHelper.deleteChecklistByid(checklist.id);
+    if (!DbHelper.isOwner(checklist.ownerId)) {
+      Messenger.showError(
+          context, 'Can\'t delete checklists that aren\'t yours');
+    }
     setState(() {
       _selectedChecklistIndex = null;
     });

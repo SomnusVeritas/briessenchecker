@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:briessenchecker/services/checklist_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -185,11 +187,15 @@ class DbHelper {
   }
 
   static Future<void> deleteItemById(int id) async {
-    await _client.from(itemsTableName).delete().eq('id', id);
+    await _client.from(itemsTableName).delete().eq('id', id).onError(_onError);
   }
 
   static Future<void> deleteItemsById(List<int> ids) async {
-    await _client.from(itemsTableName).delete().in_('id', ids);
+    await _client
+        .from(itemsTableName)
+        .delete()
+        .in_('id', ids)
+        .onError(_onError);
   }
 
   static Future<void> deleteChecklistByid(int id) async {
@@ -200,6 +206,12 @@ class DbHelper {
 
   static Stream<AuthState> get authChangeEventStream =>
       _client.auth.onAuthStateChange;
+
+  static bool isOwner(String id) {
+    return _client.auth.currentSession!.user.id == id;
+  }
+
+  static User? get currentUser => _client.auth.currentUser;
 
   static Stream<List<Map<String, dynamic>>> get checklistChangeEventStream =>
       _client.from(checklistsTableName).stream(primaryKey: ['id']);
@@ -244,5 +256,9 @@ class DbHelper {
       );
     }
     return items;
+  }
+
+  static FutureOr _onError(Object error, StackTrace stackTrace) {
+    print(error);
   }
 }
