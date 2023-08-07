@@ -41,6 +41,9 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   void initState() {
     super.initState();
     _checklistProvider = Provider.of<ChecklistProvider>(context, listen: false);
+    if (_checklistProvider.selectedChecklistId == null) {
+      Navigator.of(context).pop();
+    }
     _checklistFutures = initFutures(_checklistProvider.selectedChecklistId!);
   }
 
