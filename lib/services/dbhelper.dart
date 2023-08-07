@@ -10,10 +10,10 @@ import 'package:provider/provider.dart' as provider;
 class DbHelper {
   static const checkedItemsTableName = 'checkedItems';
   static const checklistsTableName = 'checklists';
+  static ChecklistProvider? clProvider;
   static const itemsTableName = 'items';
 
   static late final SupabaseClient _client;
-  static ChecklistProvider? clProvider;
 
   static Future<void> init() async {
     await Supabase.initialize(
@@ -56,6 +56,26 @@ class DbHelper {
       checklists.add(cl);
     }
     return checklists;
+  }
+
+  static Future<List<int>> fetchcheckedItemIds(int checklistId) async {
+    List<int> itemIdList = [];
+    final res = await _client
+        .from(checkedItemsTableName)
+        .select<List<Map<String, dynamic>>>('item_id');
+    for (final element in res) {
+      itemIdList.add(element['item_id']);
+    }
+    return itemIdList;
+  }
+
+  static Future<void> insertCheckedEntry(int checklistId, int itemId) async {
+    final ownerId = _client.auth.currentSession!.user.id;
+    await _client.from(checkedItemsTableName).insert({
+      'id': ownerId,
+      'checklist_id': checklistId,
+      'item_id': itemId,
+    });
   }
 
   static Future<void> updateChecklistTitle(int id, String title) async {
@@ -153,6 +173,15 @@ class DbHelper {
       checklistRes['description'],
       DateTime.parse(checklistRes['created_time']),
     );
+  }
+
+  static Future<void> deleteCheckedEntry(int checklistId, int itemId) async {
+    final ownerId = _client.auth.currentSession!.user.id;
+    await _client.from(checkedItemsTableName).delete().match({
+      'id': ownerId,
+      'checklist_id': checklistId,
+      'item_id': itemId,
+    });
   }
 
   static Future<void> deleteItemById(int id) async {
