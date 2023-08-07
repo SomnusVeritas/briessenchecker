@@ -213,9 +213,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     return Column(
       children: [
         Text(_checklist!.description),
-        SizedBox(
-          width: 500,
-          height: 500,
+        Expanded(
           child: ListView.builder(
             itemCount: _items.length,
             itemBuilder: _itemListBuilder,
