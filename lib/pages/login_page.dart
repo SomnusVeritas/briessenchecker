@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
   static const routeName = '/login';
 
   @override
@@ -15,6 +16,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  void _loginSubmitted(String email, String password, BuildContext context) {
+    DbHelper.login(email, password).onError(
+      (AuthException error, stackTrace) =>
+          Messenger.showError(context, error.message),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -28,36 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       Align(
           alignment: Alignment.topCenter,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (screenSize.width > 760)
-                Text(
-                  'BRISEN',
-                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        fontFamily: 'Cinzel',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Image.network(
-                  'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
-                  width: 200,
-                ),
-              ),
-              if (screenSize.width > 760)
-                Text(
-                  'CHECKER',
-                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        fontFamily: 'Cinzel',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                )
-            ],
-          )),
+          child: _tilteBuilder(screenSize.width, context)),
       Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -108,11 +88,72 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ]);
   }
+}
 
-  void _loginSubmitted(String email, String password, BuildContext context) {
-    DbHelper.login(email, password).onError(
-      (AuthException error, stackTrace) =>
-          Messenger.showError(context, error.message),
+Widget _tilteBuilder(double screenWidth, BuildContext context) {
+  if (screenWidth > 840) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 286,
+          child: Text(
+            textAlign: TextAlign.end,
+            'BRISEN',
+            style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontFamily: 'Summerbreeze',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Image.network(
+            'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
+            width: 200,
+          ),
+        ),
+        SizedBox(
+          width: 286,
+          child: Text(
+            'CHECKER',
+            style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontFamily: 'Summerbreeze',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+          ),
+        )
+      ],
+    );
+  } else {
+    return Column(
+      children: [
+        Text(
+          'BRISEN',
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                fontFamily: 'Summerbreeze',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Image.network(
+            'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
+            width: 150,
+          ),
+        ),
+        Text(
+          'CHECKER',
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                fontFamily: 'Summerbreeze',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        )
+      ],
     );
   }
 }

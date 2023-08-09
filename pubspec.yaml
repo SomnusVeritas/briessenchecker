@@ -64,6 +64,9 @@ flutter:
         - asset: fonts/Cinzel-ExtraBold.ttf
         - asset: fonts/Cinzel-Medium.ttf
         - asset: fonts/Cinzel-SemiBold.ttf
+    - family: Summerbreeze
+      fonts:
+        - asset: fonts/summerbreeze.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

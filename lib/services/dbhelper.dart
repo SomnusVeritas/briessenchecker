@@ -12,8 +12,9 @@ import 'package:provider/provider.dart' as provider;
 class DbHelper {
   static const checkedItemsTableName = 'checkedItems';
   static const checklistsTableName = 'checklists';
-  static ChecklistProvider? clProvider;
   static const itemsTableName = 'items';
+  static const profilesTableName = 'profiles';
+  static ChecklistProvider? clProvider;
 
   static late final SupabaseClient _client;
 
