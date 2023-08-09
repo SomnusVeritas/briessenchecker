@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     DbHelper.initStreams(context);
 
     return MaterialApp(
-      title: 'Briessenchecker',
+      title: 'Brisenchecker',
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
