@@ -64,7 +64,11 @@ class DbHelper {
     List<int> itemIdList = [];
     final res = await _client
         .from(checkedItemsTableName)
-        .select<List<Map<String, dynamic>>>('item_id');
+        .select<List<Map<String, dynamic>>>('item_id')
+        .match({
+      'id': currentUser!.id,
+      'checklist_id': checklistId,
+    });
     for (final element in res) {
       itemIdList.add(element['item_id']);
     }
