@@ -37,6 +37,10 @@ class MyApp extends StatelessWidget {
       title: 'Brisenchecker',
       theme: ThemeData.dark(
         useMaterial3: true,
+      ).copyWith(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 0, 141, 42),
+        ),
       ),
       initialRoute: '/',
       routes: {
