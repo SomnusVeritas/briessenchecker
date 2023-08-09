@@ -1,6 +1,8 @@
 import 'package:briessenchecker/services/dbhelper.dart';
+import 'package:briessenchecker/services/scaffold_messenger.dart';
 import 'package:briessenchecker/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -84,13 +86,13 @@ class LoginPage extends StatelessWidget {
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
                     PasswordField(
                       controller: passwordController,
-                      onSubmitted: () => _loginSubmitted(
-                          emailController.text, passwordController.text),
+                      onSubmitted: () => _loginSubmitted(emailController.text,
+                          passwordController.text, context),
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
                     FloatingActionButton.extended(
-                        onPressed: () => _loginSubmitted(
-                            emailController.text, passwordController.text),
+                        onPressed: () => _loginSubmitted(emailController.text,
+                            passwordController.text, context),
                         label: const Text('Login'))
                   ],
                 ),
@@ -102,7 +104,10 @@ class LoginPage extends StatelessWidget {
     ]);
   }
 
-  void _loginSubmitted(String email, String password) {
-    DbHelper.login(email, password);
+  void _loginSubmitted(String email, String password, BuildContext context) {
+    DbHelper.login(email, password).onError(
+      (AuthException error, stackTrace) =>
+          Messenger.showError(context, error.message),
+    );
   }
 }
