@@ -15,42 +15,42 @@ class LoginPage extends StatelessWidget {
     Size screenSize = MediaQuery.of(context).size;
     double dialogWidth = screenSize.width > 300 ? 300 : screenSize.width;
     return Stack(children: [
-      Image(
+      Image.network(
+        'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/nekro_wallpaper.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbmVrcm9fd2FsbHBhcGVyLmpwZyIsImlhdCI6MTY5MTU5NTI3MywiZXhwIjoxNzIzMTMxMjczfQ.fRSqj5N0oZq2G3rTW3fHbuaThin9oQ5Ygrvs58upUog&t=2023-08-09T15%3A34%3A33.717Z',
         width: screenSize.width,
         height: screenSize.height,
         fit: BoxFit.cover,
-        image: const AssetImage(
-          'nekro_wallpaper.jpg',
-        ),
       ),
       Align(
           alignment: Alignment.topCenter,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'BRISEN',
-                style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                      fontFamily: 'Cinzel',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Image(
+              if (screenSize.width > 760)
+                Text(
+                  'BRISEN',
+                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                        fontFamily: 'Cinzel',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Image.network(
+                  'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
                   width: 200,
-                  image: AssetImage('logo.png'),
                 ),
               ),
-              Text(
-                'CHECKER',
-                style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                      fontFamily: 'Cinzel',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-              )
+              if (screenSize.width > 760)
+                Text(
+                  'CHECKER',
+                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                        fontFamily: 'Cinzel',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                )
             ],
           )),
       Scaffold(
