@@ -1,4 +1,5 @@
 import 'package:briessenchecker/services/dbhelper.dart';
+import 'package:briessenchecker/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -20,6 +21,36 @@ class LoginPage extends StatelessWidget {
           'nekro_wallpaper.jpg',
         ),
       ),
+      Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'BRISEN',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                      fontFamily: 'Cinzel',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Image(
+                  width: 200,
+                  image: AssetImage('logo.png'),
+                ),
+              ),
+              Text(
+                'CHECKER',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                      fontFamily: 'Cinzel',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+              )
+            ],
+          )),
       Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -32,7 +63,7 @@ class LoginPage extends StatelessWidget {
             height: 300,
             width: dialogWidth,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Form(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -51,13 +82,10 @@ class LoginPage extends StatelessWidget {
                       decoration: const InputDecoration(label: Text('Email')),
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
-                    TextFormField(
+                    PasswordField(
                       controller: passwordController,
-                      autofillHints: const ['password', 'pass', 'login'],
-                      onFieldSubmitted: (value) => _loginSubmitted(
+                      onSubmitted: () => _loginSubmitted(
                           emailController.text, passwordController.text),
-                      decoration:
-                          const InputDecoration(label: Text('Password')),
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8.0)),
                     FloatingActionButton.extended(
