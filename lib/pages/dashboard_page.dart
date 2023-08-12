@@ -6,6 +6,8 @@ import 'package:briessenchecker/services/scaffold_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../services/profile_provider.dart';
+
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -19,6 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<List<Checklist>> checklistFuture = DbHelper.fetchChecklist;
   late List<Checklist> checklists;
   late ChecklistProvider checklistProvider;
+  late ProfileProvider profileProvider;
   late Stream<List<Map<String, dynamic>>> clChangeStream;
 
   int? _selectedChecklistIndex;
@@ -56,7 +59,16 @@ class _DashboardPageState extends State<DashboardPage> {
     Checklist cl = list.elementAt(index);
     return ListTile(
       title: Text(cl.title == '' ? 'Unnamed ${cl.id}' : cl.title),
-      subtitle: Text(cl.description),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(cl.description),
+          Text(
+            profileProvider.getProfileById(cl.ownerId)?.username ?? '',
+            style: const TextStyle(color: Colors.grey),
+          )
+        ],
+      ),
       onTap: () => _onListEntryTapped(cl, index),
       onLongPress: () => _onLongPress(index),
       selected: _selectedChecklistIndex == index,
@@ -102,6 +114,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     checklistProvider = Provider.of<ChecklistProvider>(context, listen: true);
+    profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     clChangeStream = DbHelper.checklistChangeEventStream;
     clChangeStream.listen(_onClChanged);
     return Scaffold(
@@ -133,9 +146,16 @@ class _DashboardPageState extends State<DashboardPage> {
       checklists = DbHelper.resToChecklistList(snapshot.data!);
     }
 
-    return ListView.builder(
-      itemCount: checklists.length,
-      itemBuilder: (context, index) => _listBuilder(context, index, checklists),
-    );
+    return ListView.separated(
+        itemCount: checklists.length,
+        itemBuilder: (context, index) =>
+            _listBuilder(context, index, checklists),
+        separatorBuilder: (context, index) {
+          return const Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            child: Divider(),
+          ));
+        });
   }
 }
