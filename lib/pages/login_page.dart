@@ -92,103 +92,112 @@ class _LoginPageState extends State<LoginPage> {
 
 Widget _tilteBuilder(Size screenSize, BuildContext context) {
   if (screenSize.width > 840) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 286,
-          child: Text(
-            textAlign: TextAlign.end,
-            'BRISEN',
-            style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                  fontFamily: 'Summerbreeze',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Image.network(
-            'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
-            width: 200,
-          ),
-        ),
-        SizedBox(
-          width: 286,
-          child: Text(
-            'CHECKER',
-            style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                  fontFamily: 'Summerbreeze',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-          ),
-        )
-      ],
-    );
-  } else if (screenSize.width <= 840 && screenSize.height > 825) {
-    return Column(
-      children: [
-        Text(
-          'BRISEN',
-          style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                fontFamily: 'Summerbreeze',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Image.network(
-            'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
-            width: 150,
-          ),
-        ),
-        Text(
-          'CHECKER',
-          style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                fontFamily: 'Summerbreeze',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        )
-      ],
-    );
-  } else {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Image.network(
-            'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
-            height: 100,
-          ),
-        ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 286,
+            child: Text(
+              textAlign: TextAlign.end,
               'BRISEN',
-              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(
                     fontFamily: 'Summerbreeze',
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
             ),
-            Text(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Image.network(
+              'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
+              width: 200,
+            ),
+          ),
+          SizedBox(
+            width: 286,
+            child: Text(
               'CHECKER',
-              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(
                     fontFamily: 'Summerbreeze',
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-            )
-          ],
-        ),
-      ],
+            ),
+          )
+        ],
+      ),
+    );
+  } else if (screenSize.width <= 840 && screenSize.height > 860) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        children: [
+          Text(
+            'BRISEN',
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontFamily: 'Summerbreeze',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Image.network(
+              'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
+              width: 150,
+            ),
+          ),
+          Text(
+            'CHECKER',
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontFamily: 'Summerbreeze',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+          )
+        ],
+      ),
+    );
+  } else {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Image.network(
+              'https://vkyxfurwyfjfvjlseegf.supabase.co/storage/v1/object/sign/assets/logo.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5wbmciLCJpYXQiOjE2OTE1OTUyNTcsImV4cCI6MTcyMzEzMTI1N30.EZeMK8bfz83jk1ELdPga0VhyedwZ4ZKDsUEGPR0QBBM&t=2023-08-09T15%3A34%3A17.513Z',
+              height: 100,
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'BRISEN',
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      fontFamily: 'Summerbreeze',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+              ),
+              Text(
+                'CHECKER',
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      fontFamily: 'Summerbreeze',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
