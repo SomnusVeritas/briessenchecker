@@ -9,6 +9,8 @@ import '../models/checklist.dart';
 import '../models/listitem.dart';
 import 'package:provider/provider.dart' as provider;
 
+import '../models/profile.dart';
+
 class DbHelper {
   static const checkedItemsTableName = 'checkedItems';
   static const checklistsTableName = 'checklists';
@@ -74,6 +76,22 @@ class DbHelper {
       itemIdList.add(element['item_id']);
     }
     return itemIdList;
+  }
+
+  static Future<List<Profile>> fetchProfiles() async {
+    List<Profile> profiles = [];
+    final res = await _client
+        .from(profilesTableName)
+        .select<List<Map<String, dynamic>>>();
+    for (final element in res) {
+      profiles.add(Profile(
+        id: element['id'],
+        username: element['username'],
+        language: element['language'] ?? '',
+        bio: element['bio'] ?? '',
+      ));
+    }
+    return profiles;
   }
 
   static Future<void> insertCheckedEntry(int checklistId, int itemId) async {

@@ -1,8 +1,10 @@
 import 'package:briessenchecker/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/dbhelper.dart';
+import '../services/profile_provider.dart';
 import 'login_page.dart';
 
 class LandingPage extends StatefulWidget {
@@ -27,8 +29,11 @@ class _LandingPageState extends State<LandingPage> {
     return const LoginPage();
   }
 
-  void _onAuthEvent(AuthState event) {
+  void _onAuthEvent(AuthState event) async {
     if (event.event == AuthChangeEvent.signedIn) {
+      await DbHelper.fetchProfiles().then((value) =>
+          p.Provider.of<ProfileProvider>(context, listen: false)
+              .updateProfiles(value));
       setState(() => _isLoggedIn = true);
     } else if (event.event == AuthChangeEvent.signedOut) {
       setState(() => _isLoggedIn = false);

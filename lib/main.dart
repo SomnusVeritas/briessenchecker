@@ -2,6 +2,7 @@ import 'package:briessenchecker/pages/detail_checklist_page.dart';
 import 'package:briessenchecker/pages/edit_checklist_page.dart';
 import 'package:briessenchecker/services/checklist_provider.dart';
 import 'package:briessenchecker/services/dbhelper.dart';
+import 'package:briessenchecker/services/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,9 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => ChecklistProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => ProfileProvider(),
     ),
     StreamProvider.value(
       value: DbHelper.checklistChangeEventStream,
@@ -38,8 +42,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(
         useMaterial3: true,
       ).copyWith(
+        dividerTheme: const DividerThemeData(thickness: 1),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 0, 141, 42),
+          seedColor: const Color.fromARGB(255, 17, 212, 75),
         ),
       ),
       initialRoute: '/',

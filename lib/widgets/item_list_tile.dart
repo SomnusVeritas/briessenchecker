@@ -1,4 +1,8 @@
+import 'package:briessenchecker/services/dbhelper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/profile_provider.dart';
 
 typedef BoolCallback = void Function(bool isSelected);
 
@@ -12,6 +16,7 @@ class ItemListTile extends StatefulWidget {
     required this.selectionMode,
     required this.isChecked,
     required this.onCheckedChanged,
+    this.ownerId = '',
   });
   final String title;
   final String description;
@@ -20,6 +25,7 @@ class ItemListTile extends StatefulWidget {
   final VoidCallback onTap;
   final BoolCallback onCheckedChanged;
   final BoolCallback itemSelectionChanged;
+  final String ownerId;
 
   @override
   State<ItemListTile> createState() => _ItemListTileState();
@@ -28,10 +34,12 @@ class ItemListTile extends StatefulWidget {
 class _ItemListTileState extends State<ItemListTile> {
   late bool isChecked;
   bool isSelected = false;
+  late ProfileProvider profileProvider;
 
   @override
   void initState() {
     super.initState();
+    profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     isChecked = widget.isChecked;
   }
 
@@ -39,7 +47,16 @@ class _ItemListTileState extends State<ItemListTile> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(widget.title),
-      subtitle: Text(widget.description),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.description),
+          Text(
+            profileProvider.getProfileById(widget.ownerId)?.username ?? '',
+            style: const TextStyle(color: Colors.grey),
+          )
+        ],
+      ),
       onTap: _onTap,
       onLongPress: _onLongPress,
       selected: isSelected,

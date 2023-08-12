@@ -76,7 +76,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     } else if (snapshot.hasError) {
       return Text('Ooooops, ${snapshot.error}');
     } else {
-      return const CircularProgressIndicator();
+      return const Center(child: CircularProgressIndicator());
     }
   }
 
@@ -110,6 +110,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       isChecked: _checkedItemIds.contains(item.id),
       onCheckedChanged: (isChecked) =>
           _onItemCheckedChanged(isChecked, item.id),
+      ownerId: item.ownerId,
     );
   }
 
@@ -179,9 +180,16 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
     if (snapshot.hasData) {
       _items = DbHelper.resToItemList(snapshot.data!);
     }
-    return ListView.builder(
+    return ListView.separated(
       itemCount: _items.length,
       itemBuilder: _itemListBuilder,
+      separatorBuilder: (context, index) {
+        return const Center(
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Divider(),
+        ));
+      },
     );
   }
 

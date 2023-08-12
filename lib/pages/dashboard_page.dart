@@ -106,7 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
     clChangeStream.listen(_onClChanged);
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Brießenchecker9000'),
+          title: const Text('Brisenchecker9000'),
           actions: [
             IconButton(
               onPressed: () => DbHelper.logout(),
