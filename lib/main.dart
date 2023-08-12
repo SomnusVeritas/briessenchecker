@@ -44,7 +44,8 @@ class MyApp extends StatelessWidget {
       ).copyWith(
         dividerTheme: const DividerThemeData(thickness: 1),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 17, 212, 75),
+          seedColor: Colors.greenAccent,
+          brightness: Brightness.dark,
         ),
       ),
       initialRoute: '/',
