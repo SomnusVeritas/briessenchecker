@@ -99,6 +99,12 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
   }
 
   Widget? _itemListBuilder(BuildContext context, int index) {
+    if (index == _items.length) {
+      return SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        height: 100,
+      );
+    }
     Item item = _items.elementAt(index);
     return ItemListTile(
       title: item.title,
@@ -181,7 +187,7 @@ class _DetailChecklistPageState extends State<DetailChecklistPage> {
       _items = DbHelper.resToItemList(snapshot.data!);
     }
     return ListView.separated(
-      itemCount: _items.length,
+      itemCount: _items.length + 1,
       itemBuilder: _itemListBuilder,
       separatorBuilder: (context, index) {
         return const Center(
